@@ -1,0 +1,1 @@
+alert("Felicidades, tu opcion de pago fue aceptada")

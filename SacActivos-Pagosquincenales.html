@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>IBKAN CAPITAL</title>
+    <meta name="description" content="te ayudamos a liquidar tu deuda">
+    <style>
+            body {
+            font-family: Arial, sans-serif;
+            background-image: url('Cobro.jpg'); /* Agrega aquí la ruta de tu imagen de fondo */
+            background-size: cover;
+            background-position: center;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.9); /* Fondo blanco semi-transparente */
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+        /* Encabezado */
+        header {
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+
+        /* Contenedor principal */
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            margin-top: 50px;
+        }
+
+        /* Estilos para el popup */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .popup-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            max-width: 80%;
+        }
+
+        .popup-message {
+            margin-bottom: 10px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .popup-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .popup-button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Ajustes para el formulario */
+        form {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        select, input[type="number"], input[type="button"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="button"] {
+            background-color: #007BFF;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        ul{
+            list-style-type: none;
+        }
+        input[type="submit"]{
+            display: block;
+            margin: 0 auto;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white; /* Cambiar a color negro */
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        h1 img {
+            margin-right: 10px; /* Espacio entre el logo y el texto */
+            height: 40px; /* Ajusta la altura del logo */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 class="display-4">
+            <img src="Logo.jpg" alt="Logo IBKAN CAPITAL">
+        <h1>IBKAN CAPITAL</h1>
+    </header>
+    <div class="container">
+        <h2>NOTA: El plazo máximo de pagos es a 48 quincenas (2 años)</h2>
+        <form action="#">
+            <label for="fortnight">¿A cuántas Quincenas te gustaría pagar tu promoción?</label>
+            <select name="Quincenas" id="fortnight">
+                <option value="Quincenas">Seleccione Quincenas</option>
+                <option value="12">12 Quincenas</option>
+                <option value="24">24 Quincenas</option>
+                <option value="48">48 Quincenas</option>
+                <option value="72">72 Quincenas</option>
+                <option value="100">100 Quincenas</option>
+            </select>
+
+            <label for="cantidad">¿Cuánto te gustaría pagar Quincenalmente de tu adeudo?</label>
+            <input type="number" id="cantidad" value="">
+            <input type="button" id="boton" value="Calcular" onclick="mostrarPopup()">
+        </form>
+
+        <ul>
+            <li>
+            </li>
+            <li>
+                <a href="SacAcctivos-Liquidarmideuda.html"><input type="submit" value="Regresar" class="botonsemanas"></a>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <p class="popup-message" id="resultadoPopup"></p>
+            <div class="popup-buttons">
+                <button class="popup-button" id="reintentar" onclick="pedirPagoMinimo()">Reintentar</button>
+                <button class="popup-button" id="continuar" onclick="cerrarPopup()">Continuar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup" id="popupPagoMinimo">
+        <div class="popup-content">
+            <p class="popup-message" id="mensajePagoMinimo"></p>
+            <button class="popup-button" id="cerrarPopupPagoMinimo" onclick="cerrarPopupPagoMinimo()">Cerrar</button>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var pagoMinimo = 0;
+
+        function mostrarPopup() {
+            var cantidadPago = parseFloat(document.getElementById("cantidad").value);
+            var quincenasElement = document.getElementById("fortnight");
+            var quincenas = parseFloat(quincenasElement.options[quincenasElement.selectedIndex].value);
+
+            if (!isNaN(cantidadPago) && !isNaN(quincenas)) {
+                var resultadoAlmacenado = 20000 / quincenas; // Calcula el resultado en base a las semanas
+                var popup = document.getElementById("popup");
+                var resultadoPopup = document.getElementById("resultadoPopup");
+
+                if (cantidadPago >= resultadoAlmacenado) {
+                    resultadoPopup.textContent = "¡Felicidades! Tu plan de pago fue aceptado.";
+                } else {
+                    resultadoPopup.textContent = "Lo sentimos, la cantidad que escogiste de pagos es muy baja. No te preocupes tenemos estas opciones para ti: 1-Aumenta el pago Quincenal 2-Aumenta el plazo de tu convenio.";
+                    document.getElementById("reintentar").style.display = "inline";
+                    document.getElementById("continuar").style.display = "inline";
+                }
+
+                popup.style.display = "flex";
+            } else {
+                alert("Por favor, ingresa una cantidad y selecciona el número de Quincenas.");
+            }
+        }
+
+        function pedirPagoMinimo() {
+            var quincenasElement = document.getElementById("fortnight");
+            var quincenas = parseFloat(quincenasElement.options[quincenasElement.selectedIndex].value);
+            var resultadoAlmacenado = 20000 / quincenas; // Calcula el resultado en base a las semanas
+
+            var popupPagoMinimo = document.getElementById("popupPagoMinimo");
+            var mensajePagoMinimo = document.getElementById("mensajePagoMinimo");
+
+            if (resultadoAlmacenado < 3000) {
+                pagoMinimo = 2000;
+            } else if (resultadoAlmacenado >= 3000 && resultadoAlmacenado <= 5000) {
+                pagoMinimo = resultadoAlmacenado * 0.1;
+            } else {
+                pagoMinimo = resultadoAlmacenado * 0.05;
+            }
+
+            mensajePagoMinimo.textContent = "El pago mínimo para " + quincenas + " quincenas es de $" + pagoMinimo.toFixed(2);
+            popupPagoMinimo.style.display = "flex";
+        }
+
+        function cerrarPopupPagoMinimo() {
+            var popupPagoMinimo = document.getElementById("popupPagoMinimo");
+            popupPagoMinimo.style.display = "none";
+        }
+
+        function cerrarPopup() {
+            var popup = document.getElementById("popup");
+            popup.style.display = "none";
+        }
+    </script>
+</body>
+</html>
